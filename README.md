@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/Logo.png" alt="CyrusCover logo" width="160">
+
 # 🎬 CyrusCover
 
 **Where Cinema Meets Legacy**
@@ -19,7 +21,7 @@ Find and save posters for your movies and TV series, directly from file or folde
 
 ## 📸 Screenshot
 
-![CyrusCover main window](assets/screenshot.jpg)
+![CyrusCover main window](assets/CineCyrus_Cover.jpg)
 
 ## ✨ Features
 
@@ -72,7 +74,8 @@ CyrusCover/
 ├── CyrusCover.pyw         Main application
 ├── assets/
 │   ├── cyruscover.ico     App icon
-│   └── screenshot.jpg     Screenshot
+│   ├── CineCyrus_Cover.jpg  Screenshot
+│   └── Logo.png           Logo
 ├── exe/
 │   └── CyrusCover.exe     Ready-to-run Windows build
 ├── build.bat              Builds the exe (Windows)
