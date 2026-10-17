@@ -4189,7 +4189,11 @@ class App:
         self.root.destroy()
 
     def _on_wheel(self, e):
-        self.page.wheel(e.delta)
+        sc = getattr(self, "scroll", None)
+        if sc is not None and sc.inner.winfo_reqheight() > sc.canvas.winfo_height():
+            sc.wheel(e.delta)
+        else:
+            self.page.wheel(e.delta)
 
     def _on_root_resize(self, e):
         if e.widget is not self.root:
@@ -4415,10 +4419,31 @@ class App:
         self.build_main(main)
         self._place_side()
 
+    def _sync_list_mode(self):
+        """Wide window: only the movie list scrolls (header and sidebar stay fixed).
+        Narrow window: the whole page scrolls once, the list shows all its items."""
+        sc = getattr(self, "scroll", None)
+        if sc is None:
+            return
+        sc.pack_forget()
+        if getattr(self, "_narrow", False):
+            sc.pack(fill="x")
+            self._fit_list_narrow()
+        else:
+            sc.canvas.configure(height=1)
+            sc.pack(fill="both", expand=True)
+
+    def _fit_list_narrow(self):
+        sc = getattr(self, "scroll", None)
+        if sc is None or not getattr(self, "_narrow", False):
+            return
+        sc.canvas.configure(height=max(1, sc.inner.winfo_reqheight()))
+
     def _place_side(self):
         if not hasattr(self, "side"):
             return
         mode = "top" if self._narrow else "right"
+        self._sync_list_mode()
         if mode == self._side_mode:
             return
         self._side_mode = mode
@@ -4640,8 +4665,10 @@ class App:
         self.progress = RProgress(main)
         self.progress.pack(fill="x", pady=(0, 16))
 
-        self.scroll = FlatBox(main, BG)
-        self.scroll.pack(fill="x")
+        self.scroll = ScrollBox(main, BG)
+        self.scroll.canvas.configure(height=1)
+        self.scroll.pack(fill="both", expand=True)
+        self.scroll.inner.bind("<Configure>", lambda e: self._fit_list_narrow(), add="+")
         self.list_frame = self.scroll.inner
         self.show_empty()
 
